@@ -26,13 +26,12 @@
 #include "license.h"
 #include "version.h"
 
-#include "cpp/Args.h"
-#include "cpp/Default.h"
+#include "libpass.h"
+#include "libstdhlcpp.h"
 
 #include "libcasm-fe.all.h"
 #include "libcasm-ir.all.h"
 #include "libcasm-tc.h"
-#include "libpass.h"
 
 /**
     @brief TODO
@@ -45,8 +44,11 @@ int main( int argc, const char* argv[] )
     const char* file_name = 0;
     u1 flag_dump_updates = false;
 
-    Args options(
-        argc, argv, Args::DEFAULT, [&file_name, &options]( const char* arg ) {
+    libstdhl::Log::DefaultSource = libstdhl::Log::Source(
+        [&argv]( void* args ) -> const char* { return argv[ 0 ]; } );
+
+    libstdhl::Args options( argc, argv, libstdhl::Args::DEFAULT,
+        [&file_name, &options]( const char* arg ) {
             static int cnt = 0;
             cnt++;
 
@@ -58,7 +60,7 @@ int main( int argc, const char* argv[] )
             file_name = arg;
         } );
 
-// options.add( 't', "test-case-profile", Args::NONE,
+// options.add( 't', "test-case-profile", libstdhl::Args::NONE,
 //     "Display the unique test profile identifier and exit.",
 //     [&options]( const char* option ) {
 //         printf( "%s\n",
@@ -69,7 +71,7 @@ int main( int argc, const char* argv[] )
 #define DESCRIPTION                                                            \
     "Corinthian Abstract State Machine (CASM) Format and Beautifier\n"
 
-    options.add( 'h', "help", Args::NONE,
+    options.add( 'h', "help", libstdhl::Args::NONE,
         "Display the program usage and synopsis and exit.",
         [&options]( const char* option ) {
             fprintf( stderr, DESCRIPTION
@@ -84,7 +86,7 @@ int main( int argc, const char* argv[] )
             exit( 0 );
         } );
 
-    options.add( 'v', "version", Args::NONE,
+    options.add( 'v', "version", libstdhl::Args::NONE,
         "Display interpreter version information",
         [&options]( const char* option ) {
             fprintf( stderr, DESCRIPTION
@@ -109,7 +111,7 @@ int main( int argc, const char* argv[] )
     //         continue;
     //     }
 
-    //     options.add( pi.getPassArgChar(), pi.getPassArgString(), Args::NONE,
+    //     options.add( pi.getPassArgChar(), pi.getPassArgString(), libstdhl::Args::NONE,
     //         pi.getPassDescription(), pi.getPassArgAction() );
     // }
 
@@ -125,10 +127,19 @@ int main( int argc, const char* argv[] )
     // to allow dynamic and possible pass calls etc.
 
     libpass::PassResult x;
-    x.getResults()[ 0 ] = (void*)file_name;
+    
     x.getResults()[ (void*)2 ]
         = (void*)flag_dump_updates; // TODO: PPA: this will be removed and
                                     // changed to a pass setter option
+
+    libpass::LoadFilePass& load_file_pass
+        = static_cast< libpass::LoadFilePass& >(
+            *libpass::PassRegistry::getPassInfo< libpass::LoadFilePass >()
+                 .constructPass() );
+    if( not load_file_pass.setFileName( file_name ).run( x ) )
+    {
+        return -1;
+    }
 
     libpass::PassInfo ast_parse
         = libpass::PassRegistry::getPassInfo< libcasm_fe::SourceToAstPass >();
