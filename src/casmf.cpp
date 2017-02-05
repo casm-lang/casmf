@@ -27,10 +27,10 @@
 #include "version.h"
 
 #include "libpass.h"
-#include "libstdhlcpp.h"
+#include "libstdhl.h"
 
-#include "libcasm-fe.all.h"
-#include "libcasm-ir.all.h"
+#include "libcasm-fe.h"
+#include "libcasm-ir.h"
 #include "libcasm-tc.h"
 
 /**
@@ -54,7 +54,7 @@ int main( int argc, const char* argv[] )
 
             if( cnt > 1 )
             {
-                options.error( 1, "to many file names passed" );
+                options.m_error( 1, "to many file names passed" );
             }
 
             file_name = arg;
@@ -79,9 +79,9 @@ int main( int argc, const char* argv[] )
                 "usage: %s [options] <file>\n"
                 "\n"
                 "options:\n",
-                options.getProgramName() );
+                options.programName() );
 
-            options.usage();
+            options.m_usage();
 
             exit( 0 );
         } );
@@ -94,7 +94,7 @@ int main( int argc, const char* argv[] )
                 "%s: version: %s [ %s %s ]\n"
                 "\n"
                 "%s\n",
-                options.getProgramName(), VERSION, __DATE__, __TIME__,
+                options.programName(), VERSION, __DATE__, __TIME__,
                 LICENSE );
 
             exit( 0 );
@@ -105,22 +105,22 @@ int main( int argc, const char* argv[] )
     //     // PassId    id = p.first;
     //     libpass::PassInfo& pi = *p.second;
 
-    //     if( pi.getPassArgChar() == 0 && pi.getPassArgString() == 0 )
+    //     if( pi.passArgChar() == 0 && pi.passArgString() == 0 )
     //     {
     //         // internal pass, do not register a cmd line flag
     //         continue;
     //     }
 
-    //     options.add( pi.getPassArgChar(), pi.getPassArgString(),
+    //     options.add( pi.passArgChar(), pi.passArgString(),
     //     libstdhl::Args::NONE,
-    //         pi.getPassDescription(), pi.getPassArgAction() );
+    //         pi.passDescription(), pi.passArgAction() );
     // }
 
     options.parse();
 
     if( !file_name )
     {
-        options.error( 1, "no input file provided" );
+        options.m_error( 1, "no input file provided" );
     }
 
     // TODO: FIXME: the following code should be implemented in the PassManager
@@ -129,12 +129,12 @@ int main( int argc, const char* argv[] )
 
     libpass::PassResult x;
 
-    x.getResults()[ (void*)2 ]
+    x.results()[ (void*)2 ]
         = (void*)flag_dump_updates; // TODO: PPA: this will be removed and
                                     // changed to a pass setter option
 
     auto load_file_pass = std::dynamic_pointer_cast< libpass::LoadFilePass >(
-        libpass::PassRegistry::getPassInfo< libpass::LoadFilePass >()
+        libpass::PassRegistry::passInfo< libpass::LoadFilePass >()
             .constructPass() );
     load_file_pass->setFileName( file_name );
     if( not load_file_pass->run( x ) )
@@ -143,10 +143,10 @@ int main( int argc, const char* argv[] )
     }
 
     libpass::PassInfo ast_parse
-        = libpass::PassRegistry::getPassInfo< libcasm_fe::SourceToAstPass >();
+        = libpass::PassRegistry::passInfo< libcasm_fe::SourceToAstPass >();
     if( ast_parse.constructPass()->run( x ) )
     {
-        if( ast_parse.isPassArgSelected() )
+        if( ast_parse.isArgSelected() )
         {
             return 0;
         }
@@ -157,10 +157,10 @@ int main( int argc, const char* argv[] )
     }
 
     libpass::PassInfo ast_check
-        = libpass::PassRegistry::getPassInfo< libcasm_fe::TypeCheckPass >();
+        = libpass::PassRegistry::passInfo< libcasm_fe::TypeCheckPass >();
     if( ast_check.constructPass()->run( x ) )
     {
-        if( ast_check.isPassArgSelected() )
+        if( ast_check.isArgSelected() )
         {
             return 0;
         }
