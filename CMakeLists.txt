@@ -1,10 +1,10 @@
 #
-#   Copyright (c) 2014-2016 CASM Organization
+#   Copyright (c) 2014-2017 CASM Organization
 #   All rights reserved.
 #
-#   Developed by: Florian Hahn
-#                 Philipp Paulweber
+#   Developed by: Philipp Paulweber
 #                 Emmanuel Pescosta
+#                 Florian Hahn
 #                 https://github.com/casm-lang/casmf
 #
 #   This file is part of casmf.
