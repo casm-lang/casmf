@@ -5,22 +5,22 @@
 //  Developed by: Philipp Paulweber
 //                Emmanuel Pescosta
 //                Florian Hahn
-//                https://github.com/casm-lang/casmf
+//                https://github.com/casm-lang/casmi
 //
-//  This file is part of casmf.
+//  This file is part of casmi.
 //
-//  casmf is free software: you can redistribute it and/or modify
+//  casmi is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
 //
-//  casmf is distributed in the hope that it will be useful,
+//  casmi is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 //  GNU General Public License for more details.
 //
 //  You should have received a copy of the GNU General Public License
-//  along with casmf. If not, see <http://www.gnu.org/licenses/>.
+//  along with casmi. If not, see <http://www.gnu.org/licenses/>.
 //
 
 #include "license.h"
@@ -39,37 +39,47 @@
     TODO
 */
 
+#define DESCRIPTION                                                            \
+    "Corinthian Abstract State Machine (CASM) Format and Beautifier\n"
+
 int main( int argc, const char* argv[] )
 {
-    const char* file_name = 0;
-    u1 flag_dump_updates = false;
+    libpass::PassManager pm;
+    libstdhl::Logger log( pm.stream() );
+    log.setSource(
+        libstdhl::make< libstdhl::Log::Source >( argv[ 0 ], DESCRIPTION ) );
 
-    libstdhl::Log::DefaultSource = libstdhl::Log::Source(
-        [&argv]( void* args ) -> const char* { return argv[ 0 ]; } );
+    auto flush = [&pm]() {
+        libstdhl::Log::StringFormatter f;
+        libstdhl::Log::OutputStreamSink c( std::cerr, f );
+        pm.stream().flush( c );
+    };
+
+    const char* file_name = 0;
 
     libstdhl::Args options( argc, argv, libstdhl::Args::DEFAULT,
-        [&file_name, &options]( const char* arg ) {
+        [&file_name, &log]( const char* arg ) {
             static int cnt = 0;
             cnt++;
 
             if( cnt > 1 )
             {
-                options.m_error( 1, "to many file names passed" );
+                log.error( "too many file names passed" );
+                return 1;
             }
 
             file_name = arg;
+            return 0;
         } );
 
-// options.add( 't', "test-case-profile", libstdhl::Args::NONE,
-//     "Display the unique test profile identifier and exit.",
-//     [&options]( const char* option ) {
-//         printf( "%s\n",
-//             libcasm_tc::Profile::get( libcasm_tc::Profile::INTERPRETER ) );
-//         exit( 0 );
-//     } );
-
-#define DESCRIPTION                                                            \
-    "Corinthian Abstract State Machine (CASM) Format and Beautifier\n"
+    options.add( 't', "test-case-profile", libstdhl::Args::NONE,
+        "Display the unique test profile identifier and exit.",
+        [&options]( const char* option ) {
+            std::cout << std::string( libcasm_tc::Profile::get(
+                             libcasm_tc::Profile::FORMAT ) )
+                      << "\n";
+            return -1;
+        } );
 
     options.add( 'h', "help", libstdhl::Args::NONE,
         "Display the program usage and synopsis and exit.",
@@ -82,8 +92,7 @@ int main( int argc, const char* argv[] )
                 options.programName() );
 
             options.m_usage();
-
-            exit( 0 );
+            return -1;
         } );
 
     options.add( 'v', "version", libstdhl::Args::NONE,
@@ -94,83 +103,79 @@ int main( int argc, const char* argv[] )
                 "%s: version: %s [ %s %s ]\n"
                 "\n"
                 "%s",
-                options.programName(), VERSION, __DATE__, __TIME__,
-                LICENSE );
-
-            exit( 0 );
+                options.programName(), VERSION, __DATE__, __TIME__, LICENSE );
+            return -1;
         } );
 
-    // for( auto& p : libpass::PassRegistry::getRegisteredPasses() )
-    // {
-    //     // PassId    id = p.first;
-    //     libpass::PassInfo& pi = *p.second;
+    for( auto& p : libpass::PassRegistry::registeredPasses() )
+    {
+        libpass::PassInfo& pi = *p.second;
 
-    //     if( pi.passArgChar() == 0 && pi.passArgString() == 0 )
-    //     {
-    //         // internal pass, do not register a cmd line flag
-    //         continue;
-    //     }
+        if( pi.argChar() == 0 && pi.argString() == 0 )
+        {
+            continue;
+        }
 
-    //     options.add( pi.passArgChar(), pi.passArgString(),
-    //     libstdhl::Args::NONE,
-    //         pi.passDescription(), pi.passArgAction() );
-    // }
+        options.add( pi.argChar(), pi.argString(), libstdhl::Args::NONE,
+            pi.description(), pi.argAction() );
+    }
 
-    options.parse();
+    if( auto ret = options.parse( log ) )
+    {
+        flush();
+
+        if( ret >= 0 )
+        {
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
 
     if( !file_name )
     {
-        options.m_error( 1, "no input file provided" );
+        log.error( "no input file provided" );
+        flush();
+        return 2;
     }
 
-    // TODO: FIXME: the following code should be implemented in the PassManager
-    // structure
-    // to allow dynamic and possible pass calls etc.
+    // register all wanted passes
+    // and configure their setup hooks if desired
 
-    libpass::PassResult x;
+    pm.add< libpass::LoadFilePass >(
+        [&file_name]( libpass::LoadFilePass& pass ) {
+            pass.setFilename( file_name );
 
-    x.results()[ (void*)2 ]
-        = (void*)flag_dump_updates; // TODO: PPA: this will be removed and
-                                    // changed to a pass setter option
+        } );
 
-    auto load_file_pass = std::dynamic_pointer_cast< libpass::LoadFilePass >(
-        libpass::PassRegistry::passInfo< libpass::LoadFilePass >()
-            .constructPass() );
-    load_file_pass->setFileName( file_name );
-    if( not load_file_pass->run( x ) )
+    pm.add< libcasm_fe::SourceToAstPass >();
+    pm.add< libcasm_fe::TypeCheckPass >();
+    // pm.add< libcasm_fe::AstDumpSourcePass >(
+    //     [&flag_dump_updates]( libcasm_fe::AstDumpSourcePass& pass ) {
+    //         // pass.set OPTION etc. TODO
+    //     } );
+
+    // pm.setDefaultPass< libcasm_fe::AstDumpSourcePass >();
+
+    int result = 0;
+
+    try
     {
-        return -1;
+        pm.run( flush );
+    }
+    catch( std::exception& e )
+    {
+        log.error( "pass manager triggered an exception: '"
+                   + std::string( e.what() )
+                   + "'" );
+        result = -1;
     }
 
-    libpass::PassInfo ast_parse
-        = libpass::PassRegistry::passInfo< libcasm_fe::SourceToAstPass >();
-    if( ast_parse.constructPass()->run( x ) )
-    {
-        if( ast_parse.isArgSelected() )
-        {
-            return 0;
-        }
-    }
-    else
-    {
-        return -1;
-    }
+    flush();
 
-    libpass::PassInfo ast_check
-        = libpass::PassRegistry::passInfo< libcasm_fe::TypeCheckPass >();
-    if( ast_check.constructPass()->run( x ) )
-    {
-        if( ast_check.isArgSelected() )
-        {
-            return 0;
-        }
-    }
-    else
-    {
-        return -1;
-    }
-
-    return 0;
+    return result;
 }
 
 //
