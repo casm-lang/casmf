@@ -22,8 +22,32 @@
 //  along with casmf. If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include "gtest/gtest.h"
+#ifndef _CASMF_VERSION_H_
+#define _CASMF_VERSION_H_
 
-TEST( libcasm_fe__subject, example )
+/**
+   @brief    TODO
+
+   TODO
+
+   variables are automatically set by CMake
+*/
+
+namespace casmf
 {
+    constexpr const char* REVTAG = "@GIT_REVTAG@";
+    constexpr const char* COMMIT = "@GIT_COMMIT@";
+    constexpr const char* BRANCH = "@GIT_BRANCH@";
 }
+
+#endif // _CASMF_VERSION_H_
+
+//
+//  Local variables:
+//  mode: c++
+//  indent-tabs-mode: nil
+//  c-basic-offset: 4
+//  tab-width: 4
+//  End:
+//  vim:noexpandtab:sw=4:ts=4:
+//

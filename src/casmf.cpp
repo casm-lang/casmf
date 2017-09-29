@@ -4,34 +4,34 @@
 //
 //  Developed by: Philipp Paulweber
 //                Emmanuel Pescosta
-//                Florian Hahn
-//                https://github.com/casm-lang/casmi
+//                https://github.com/casm-lang/casmf
 //
-//  This file is part of casmi.
+//  This file is part of casmf.
 //
-//  casmi is free software: you can redistribute it and/or modify
+//  casmf is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
 //
-//  casmi is distributed in the hope that it will be useful,
+//  casmf is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 //  GNU General Public License for more details.
 //
 //  You should have received a copy of the GNU General Public License
-//  along with casmi. If not, see <http://www.gnu.org/licenses/>.
+//  along with casmf. If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include "license.h"
-#include "version.h"
+#include "License.h"
+#include "casmf/Version"
 
-#include "libpass.h"
-#include "libstdhl.h"
+#include <libcasm-fe/libcasm-fe>
+#include <libcasm-ir/libcasm-ir>
+#include <libpass/libpass>
+#include <libstdhl/libstdhl>
+// #include <libcasm-rt/libcasm-rt>
 
-#include "libcasm-fe.h"
-#include "libcasm-ir.h"
-#include "libcasm-tc.h"
+#include "../../../lib/casm-tc/libcasm-tc.h"
 
 /**
     @brief TODO
@@ -46,8 +46,8 @@ int main( int argc, const char* argv[] )
 {
     libpass::PassManager pm;
     libstdhl::Logger log( pm.stream() );
-    log.setSource(
-        libstdhl::make< libstdhl::Log::Source >( argv[ 0 ], DESCRIPTION ) );
+    log.setSource( libstdhl::Memory::make< libstdhl::Log::Source >(
+        argv[ 0 ], DESCRIPTION ) );
 
     auto flush = [&pm, &argv]() {
         libstdhl::Log::ApplicationFormatter f( argv[ 0 ] );
@@ -101,7 +101,7 @@ int main( int argc, const char* argv[] )
 
             log.output( "\n" + DESCRIPTION + "\n" + log.source()->name()
                         + ": version: "
-                        + VERSION
+                        + casmf::REVTAG
                         + " [ "
                         + __DATE__
                         + " "
