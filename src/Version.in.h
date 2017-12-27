@@ -40,7 +40,7 @@ namespace casmf
     constexpr const char* BRANCH = "@GIT_BRANCH@";
 }
 
-#endif // _CASMF_VERSION_H_
+#endif  // _CASMF_VERSION_H_
 
 //
 //  Local variables:

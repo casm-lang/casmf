@@ -38,15 +38,14 @@
     TODO
 */
 
-static const std::string DESCRIPTION
-    = "Corinthian Abstract State Machine (CASM) Code Format and Beautifier\n";
+static const std::string DESCRIPTION =
+    "Corinthian Abstract State Machine (CASM) Code Format and Beautifier\n";
 
 int main( int argc, const char* argv[] )
 {
     libpass::PassManager pm;
     libstdhl::Logger log( pm.stream() );
-    log.setSource( libstdhl::Memory::make< libstdhl::Log::Source >(
-        argv[ 0 ], DESCRIPTION ) );
+    log.setSource( libstdhl::Memory::make< libstdhl::Log::Source >( argv[ 0 ], DESCRIPTION ) );
 
     auto flush = [&pm, &argv]() {
         libstdhl::Log::ApplicationFormatter f( argv[ 0 ] );
@@ -56,15 +55,14 @@ int main( int argc, const char* argv[] )
 
     std::vector< std::string > files_input;
 
-    libstdhl::Args options( argc, argv, libstdhl::Args::DEFAULT,
-        [&log, &files_input]( const char* arg ) {
+    libstdhl::Args options(
+        argc, argv, libstdhl::Args::DEFAULT, [&log, &files_input]( const char* arg ) {
 
             if( files_input.size() > 0 )
             {
-                log.error( "too many files, input file '" + files_input.front()
-                           + "' cannot be combined with file '"
-                           + arg
-                           + "'" );
+                log.error(
+                    "too many files, input file '" + files_input.front() +
+                    "' cannot be combined with file '" + arg + "'" );
                 return 1;
             }
 
@@ -72,42 +70,38 @@ int main( int argc, const char* argv[] )
             return 0;
         } );
 
-    options.add( 't', "test-case-profile", libstdhl::Args::NONE,
+    options.add(
+        't',
+        "test-case-profile",
+        libstdhl::Args::NONE,
         "display the unique test profile identifier",
         [&options]( const char* ) {
 
-            std::cout << libcasm_tc::Profile::get( libcasm_tc::Profile::FORMAT )
-                      << "\n";
+            std::cout << libcasm_tc::Profile::get( libcasm_tc::Profile::FORMAT ) << "\n";
 
             return -1;
         } );
 
-    options.add( 'h', "help", libstdhl::Args::NONE,
-        "display usage and synopsis", [&log, &options]( const char* ) {
+    options.add(
+        'h',
+        "help",
+        libstdhl::Args::NONE,
+        "display usage and synopsis",
+        [&log, &options]( const char* ) {
 
-            log.output( "\n" + DESCRIPTION + "\n" + log.source()->name()
-                        + ": usage: [options] <file>\n"
-                        + "\n"
-                        + "options: \n"
-                        + options.usage()
-                        + "\n" );
+            log.output(
+                "\n" + DESCRIPTION + "\n" + log.source()->name() + ": usage: [options] <file>\n" +
+                "\n" + "options: \n" + options.usage() + "\n" );
 
             return -1;
         } );
 
-    options.add( 'v', "version", libstdhl::Args::NONE,
-        "display version information", [&log]( const char* ) {
+    options.add(
+        'v', "version", libstdhl::Args::NONE, "display version information", [&log]( const char* ) {
 
-            log.output( "\n" + DESCRIPTION + "\n" + log.source()->name()
-                        + ": version: "
-                        + casmf::REVTAG
-                        + " [ "
-                        + __DATE__
-                        + " "
-                        + __TIME__
-                        + " ]\n"
-                        + "\n"
-                        + LICENSE );
+            log.output(
+                "\n" + DESCRIPTION + "\n" + log.source()->name() + ": version: " + casmf::REVTAG +
+                " [ " + __DATE__ + " " + __TIME__ + " ]\n" + "\n" + LICENSE );
 
             return -1;
         } );
@@ -118,8 +112,12 @@ int main( int argc, const char* argv[] )
 
         if( pi.argChar() or pi.argString() )
         {
-            options.add( pi.argChar(), pi.argString(), libstdhl::Args::NONE,
-                pi.description(), pi.argAction() );
+            options.add(
+                pi.argChar(),
+                pi.argString(),
+                libstdhl::Args::NONE,
+                pi.description(),
+                pi.argAction() );
         }
     }
 
@@ -147,11 +145,10 @@ int main( int argc, const char* argv[] )
     // register all wanted passes
     // and configure their setup hooks if desired
 
-    pm.add< libpass::LoadFilePass >(
-        [&files_input]( libpass::LoadFilePass& pass ) {
-            pass.setFilename( files_input.front() );
+    pm.add< libpass::LoadFilePass >( [&files_input]( libpass::LoadFilePass& pass ) {
+        pass.setFilename( files_input.front() );
 
-        } );
+    } );
 
     pm.add< libcasm_fe::SourceToAstPass >();
     pm.add< libcasm_fe::TypeInferencePass >();
@@ -164,9 +161,7 @@ int main( int argc, const char* argv[] )
     }
     catch( std::exception& e )
     {
-        log.error( "pass manager triggered an exception: '"
-                   + std::string( e.what() )
-                   + "'" );
+        log.error( "pass manager triggered an exception: '" + std::string( e.what() ) + "'" );
         result = -1;
     }
 
