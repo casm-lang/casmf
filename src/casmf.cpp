@@ -30,7 +30,6 @@
 #include <libcasm-tc/Profile>
 #include <libpass/libpass>
 #include <libstdhl/libstdhl>
-// #include <libcasm-rt/libcasm-rt>
 
 /**
     @brief TODO
@@ -53,22 +52,21 @@ int main( int argc, const char* argv[] )
         pm.stream().flush( c );
     };
 
-    std::vector< std::string > files_input;
+    std::vector< std::string > files;
 
-    libstdhl::Args options(
-        argc, argv, libstdhl::Args::DEFAULT, [&log, &files_input]( const char* arg ) {
+    libstdhl::Args options( argc, argv, libstdhl::Args::DEFAULT, [&files, &log]( const char* arg ) {
 
-            if( files_input.size() > 0 )
-            {
-                log.error(
-                    "too many files, input file '" + files_input.front() +
-                    "' cannot be combined with file '" + arg + "'" );
-                return 1;
-            }
+        if( files.size() > 0 )
+        {
+            log.error(
+                "too many files, input file '" + files.front() +
+                "' cannot be combined with file '" + arg + "'" );
+            return 1;
+        }
 
-            files_input.emplace_back( arg );
-            return 0;
-        } );
+        files.emplace_back( arg );
+        return 0;
+    } );
 
     options.add(
         't',
@@ -106,9 +104,13 @@ int main( int argc, const char* argv[] )
             return -1;
         } );
 
-    for( auto& p : libpass::PassRegistry::registeredPasses() )
+    // add passes to the pass manager to setup command-line options
+
+    pm.add< libcasm_fe::AstDumpSourcePass >();
+
+    for( auto id : pm.passes() )
     {
-        libpass::PassInfo& pi = *p.second;
+        libpass::PassInfo& pi = libpass::PassRegistry::passInfo( id );
 
         if( pi.argChar() or pi.argString() )
         {
@@ -120,6 +122,8 @@ int main( int argc, const char* argv[] )
                 pi.argAction() );
         }
     }
+
+    // parse the command-line
 
     if( auto ret = options.parse( log ) )
     {
@@ -135,39 +139,37 @@ int main( int argc, const char* argv[] )
         }
     }
 
-    if( files_input.size() == 0 )
+    if( files.size() == 0 )
     {
         log.error( "no input file provided" );
         flush();
         return 2;
     }
 
-    // register all wanted passes
-    // and configure their setup hooks if desired
+    // set default settings
 
-    pm.add< libpass::LoadFilePass >( [&files_input]( libpass::LoadFilePass& pass ) {
-        pass.setFilename( files_input.front() );
+    libpass::PassResult pr;
+    pr.setInput< libpass::LoadFilePass >( files.front() );
 
-    } );
+    pm.setDefaultResult( pr );
+    pm.setDefaultPass< libcasm_fe::AstDumpSourcePass >();
 
-    pm.add< libcasm_fe::SourceToAstPass >();
-    pm.add< libcasm_fe::TypeInferencePass >();
+    // set pass-specific configurations
 
-    int result = 0;
+    // pm.set< libcasm_fe::TODO >( [&]( libcasm_fe::TODO& pass ) {
+    //     pass.setTODO( TODO );
 
-    try
+    // } );
+
+    // run pass pipeline
+
+    if( not pm.run( flush ) )
     {
-        pm.run( flush );
-    }
-    catch( std::exception& e )
-    {
-        log.error( "pass manager triggered an exception: '" + std::string( e.what() ) + "'" );
-        result = -1;
+        return -1;
     }
 
     flush();
-
-    return result;
+    return 0;
 }
 
 //
