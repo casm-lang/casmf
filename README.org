@@ -1,10 +1,10 @@
 # 
-#   Copyright (c) 2014-2017 CASM Organization
+#   Copyright (C) 2017-2018 CASM Organization <https://casm-lang.org>
 #   All rights reserved.
 # 
 #   Developed by: Philipp Paulweber
 #                 Emmanuel Pescosta
-#                 https://github.com/casm-lang/casmf
+#                 <https://github.com/casm-lang/casmf>
 # 
 #   This file is part of casmf.
 # 
@@ -32,19 +32,21 @@ This project contains an format and beautifier for the Abstract State Machine (A
 
 ** Copyright and License
 
-The copyright holder of casmf is the CASM organization (@casm-lang) 
-and the used license of casmf is a [[https://www.gnu.org/licenses/gpl-3.0.html][GNU GPLv3+]].
+The copyright holder of 
+=casmf= is the [[https://casm-lang.org][CASM organization]] ([[https://github.com/casm-lang][@casm-lang]]) 
+and the used license of 
+=casmf= is the [[https://www.gnu.org/licenses/gpl-3.0.html][GNU GPLv3+]].
 
 *** Notice
 
 #+begin_src
 
-Copyright (c) 2014-2017 CASM Organization
+Copyright (C) 2017-2018 CASM Organization <https://casm-lang.org>
 All rights reserved.
 
 Developed by: Philipp Paulweber
               Emmanuel Pescosta
-              https://github.com/casm-lang/casmf
+              <https://github.com/casm-lang/casmf>
 
 This file is part of casmf.
 

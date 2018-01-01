@@ -1,10 +1,10 @@
 //
-//  Copyright (c) 2014-2017 CASM Organization
+//  Copyright (C) 2017-2018 CASM Organization <https://casm-lang.org>
 //  All rights reserved.
 //
 //  Developed by: Philipp Paulweber
 //                Emmanuel Pescosta
-//                https://github.com/casm-lang/casmf
+//                <https://github.com/casm-lang/casmf>
 //
 //  This file is part of casmf.
 //
