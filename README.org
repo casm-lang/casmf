@@ -35,7 +35,7 @@ This project contains an format and beautifier for the Abstract State Machine (A
 The copyright holder of 
 =casmf= is the [[https://casm-lang.org][CASM organization]] ([[https://github.com/casm-lang][@casm-lang]]) 
 and the used license of 
-=casmf= is the [[https://www.gnu.org/licenses/gpl-3.0.html][GNU GPLv3+]].
+=casmf= is the [[https://www.gnu.org/licenses/gpl-3.0.html][GNU GPLv3]].
 
 *** Notice
 
