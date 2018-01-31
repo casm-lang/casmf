@@ -99,7 +99,7 @@ int main( int argc, const char* argv[] )
 
             log.output(
                 "\n" + DESCRIPTION + "\n" + log.source()->name() + ": version: " + casmf::REVTAG +
-                " [ " + __DATE__ + " " + __TIME__ + " ]\n" + "\n" + LICENSE );
+                " [ " + __DATE__ + " " + __TIME__ + " ]\n" + "\n" + casmf::LICENSE );
 
             return -1;
         } );
