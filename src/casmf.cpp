@@ -22,7 +22,6 @@
 //  along with casmf. If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include "License.h"
 #include "casmf/Version"
 
 #include <libcasm-fe/libcasm-fe>
@@ -99,7 +98,7 @@ int main( int argc, const char* argv[] )
 
             log.output(
                 "\n" + DESCRIPTION + "\n" + log.source()->name() + ": version: " + casmf::REVTAG +
-                " [ " + __DATE__ + " " + __TIME__ + " ]\n" + "\n" + casmf::LICENSE );
+                " [ " + __DATE__ + " " + __TIME__ + " ]\n" + "\n" + casmf::NOTICE );
 
             return -1;
         } );
