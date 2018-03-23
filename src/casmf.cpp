@@ -54,7 +54,6 @@ int main( int argc, const char* argv[] )
     std::vector< std::string > files;
 
     libstdhl::Args options( argc, argv, libstdhl::Args::DEFAULT, [&files, &log]( const char* arg ) {
-
         if( files.size() > 0 )
         {
             log.error(
@@ -73,7 +72,6 @@ int main( int argc, const char* argv[] )
         libstdhl::Args::NONE,
         "display the unique test profile identifier",
         [&options]( const char* ) {
-
             std::cout << libcasm_tc::Profile::get( libcasm_tc::Profile::FORMAT ) << "\n";
 
             return -1;
@@ -85,7 +83,6 @@ int main( int argc, const char* argv[] )
         libstdhl::Args::NONE,
         "display usage and synopsis",
         [&log, &options]( const char* ) {
-
             log.output(
                 "\n" + DESCRIPTION + "\n" + log.source()->name() + ": usage: [options] <file>\n" +
                 "\n" + "options: \n" + options.usage() + "\n" );
@@ -95,7 +92,6 @@ int main( int argc, const char* argv[] )
 
     options.add(
         'v', "version", libstdhl::Args::NONE, "display version information", [&log]( const char* ) {
-
             log.output(
                 "\n" + DESCRIPTION + "\n" + log.source()->name() + ": version: " + casmf::REVTAG +
                 " [ " + __DATE__ + " " + __TIME__ + " ]\n" + "\n" + casmf::NOTICE );
