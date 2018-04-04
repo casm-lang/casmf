@@ -24,14 +24,14 @@
 
 #include "main.h"
 
-void casmd_main_dummy( void )
+void casmf_main_dummy( void )
 {
-    const auto source = libstdhl::Memory::make< libstdhl::Log::Source >( "casmd", "CASMD" );
+    const auto source = libstdhl::Memory::make< libstdhl::Log::Source >( "casmf", "CASMF" );
 
     libstdhl::Log::defaultSource( source );
 }
 
-TEST( casmd_main, empty )
+TEST( casmf_main, empty )
 {
 }
 

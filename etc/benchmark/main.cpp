@@ -24,7 +24,7 @@
 
 #include <hayai/hayai.hpp>
 
-BENCHMARK( casmd, main, 0, 0 )
+BENCHMARK( casmf, main, 0, 0 )
 {
 }
 
