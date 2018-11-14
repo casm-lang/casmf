@@ -25,6 +25,8 @@
 #ifndef _CASMF_VERSION_H_
 #define _CASMF_VERSION_H_
 
+#include <string>
+
 /**
    @brief    TODO
 
@@ -35,6 +37,9 @@
 
 namespace casmf
 {
+    const std::string DESCRIPTION =
+        "Corinthian Abstract State Machine (CASM) Code Format and Beautifier\n";
+    const std::string PROFILE = "format";
     constexpr const char* REVTAG = "@GIT_REVTAG@";
     constexpr const char* COMMIT = "@GIT_COMMIT@";
     constexpr const char* BRANCH = "@GIT_BRANCH@";
