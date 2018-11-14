@@ -26,7 +26,6 @@ TARGET = casmf
 
 FORMAT  = src
 FORMAT += src/*
-FORMAT += src/*/*
 FORMAT += etc
 FORMAT += etc/*
 FORMAT += etc/*/*
@@ -35,4 +34,17 @@ UPDATE_ROOT = ../../lib/stdhl
 
 include .cmake/config.mk
 
-ENV_FLAGS = CASM=$(OBJ)/$(TARGET) CASM_ARG_PRE=
+ENV_FLAGS = CASM_ARG_PRE=--ast-dump
+ifeq ($(ENV_OSYS),Windows)
+  ENV_FLAGS += CASM=$(OBJ)\\$(TARGET)
+else
+  ENV_FLAGS += CASM=$(OBJ)/$(TARGET)
+endif
+
+
+ci-fetch: ci-git-access
+
+ci-git-access:
+	@echo "-- Git Access Configuration"
+	@git config --global \
+	url."https://$(GITHUB_TOKEN)@github.com/".insteadOf "https://github.com/"
