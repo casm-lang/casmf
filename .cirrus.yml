@@ -1,0 +1,114 @@
+#
+#   Copyright (C) 2017-2019 CASM Organization <https://casm-lang.org>
+#   All rights reserved.
+#
+#   Developed by: Philipp Paulweber
+#                 Emmanuel Pescosta
+#                 <https://github.com/casm-lang/casmf>
+#
+#   This file is part of casmf.
+#
+#   casmf is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   casmf is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with casmf. If not, see <http://www.gnu.org/licenses/>.
+#
+
+linux_task:
+  container:
+    image: casmlang/container.linux
+    memory: 2
+    cpu: 1
+  env:
+    GITHUB_TOKEN: ENCRYPTED[d160c9c7564de0a0702dfb23e8bd0c4e48e281c20e12d14136f36c86d11d955fc5b6d0b83b3a14b45a8d44bc25b06eb6]
+  matrix:
+    env:
+      B: "coverage"
+      C: "clang"
+    env:
+      B: "coverage"
+      C: "gcc"
+      CODECOV_TOKEN: ENCRYPTED[5ce9f1e509df0a00bde47fbabcfe4966efa1e373df1373980abb32af731fde09487fca113b2e01fbea649be79fe374a7]
+  fetch_script:
+    - make ci-fetch
+  deps_script:
+    - make ci-deps
+  build_script:
+    - make ci-build
+  test_script:
+    - make ci-test
+  benchmark_script:
+    - if [ "$B" == "release" ]; then make ci-benchmark; fi
+  coverage_script:
+    - |
+      if [ "$C" == "gcc" ]; then
+        wget https://codecov.io/bash;
+        sh bash -f "!*#usr#include*" 2> /dev/null;
+      fi
+
+darwin_task:
+  osx_instance:
+    image: mojave-xcode-10.1
+  env:
+    GITHUB_TOKEN: ENCRYPTED[d160c9c7564de0a0702dfb23e8bd0c4e48e281c20e12d14136f36c86d11d955fc5b6d0b83b3a14b45a8d44bc25b06eb6]
+  matrix:
+    env:
+      B: "debug"
+      C: "clang"
+    env:
+      B: "debug"
+      C: "gcc"
+  setup_script:
+    - ln -s /usr/local/bin/gcc-8 /usr/local/bin/gcc
+    - ln -s /usr/local/bin/g++-8 /usr/local/bin/g++
+  fetch_script:
+    - make ci-fetch
+  deps_script:
+    - make ci-deps
+  build_script:
+    - make ci-build
+  test_script:
+    - make ci-test
+  benchmark_script:
+    - if [ "$B" == "release" ]; then make ci-benchmark; fi
+
+windows_task:
+  windows_container:
+    image: casmlang/container.windows
+    os_version: 2019
+    cpu: 1
+  env:
+    GITHUB_TOKEN: ENCRYPTED[d160c9c7564de0a0702dfb23e8bd0c4e48e281c20e12d14136f36c86d11d955fc5b6d0b83b3a14b45a8d44bc25b06eb6]
+  matrix:
+    env:
+      V: mingw64
+      B: "debug"
+      C: "clang"
+    env:
+      V: mingw64
+      B: "debug"
+      C: "gcc"
+  fetch_script:
+    - set PATH=C:\msys2\%V%\bin;%PATH%
+    - make ci-fetch
+  deps_script:
+    - set PATH=C:\msys2\%V%\bin;%PATH%
+    - make ci-deps
+  build_script:
+    - set PATH=C:\msys2\%V%\bin;%PATH%
+    - make ci-build
+  test_script:
+    - set PATH=C:\msys2\%V%\bin;%PATH%
+    - make ci-test
+  benchmark_script:
+    - set PATH=C:\msys2\%V%\bin;%PATH%
+    - echo if "%B%"=="release" make ci-benchmark > obj\benchmark_script.bat
+    - obj\benchmark_script.bat
