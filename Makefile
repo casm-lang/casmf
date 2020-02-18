@@ -34,9 +34,11 @@ UPDATE_ROOT = ../../lib/stdhl
 
 include .cmake/config.mk
 
-ENV_FLAGS = CASM_ARG_PRE=--ast-emit
+ENV_FLAGS =
 ifeq ($(ENV_OSYS),Windows)
-  ENV_FLAGS += CASM="\"$(OBJ)/$(TARGET)\""
+  ENV_FLAGS += set CASM_ARG_PRE=--ast-emit &&
+  ENV_FLAGS += set CASM="\"$(OBJ)/$(TARGET)\""
 else
-  ENV_FLAGS += CASM=$(OBJ)/$(TARGET)
+  ENV_FLAGS += export CASM_ARG_PRE=--ast-emit &&
+  ENV_FLAGS += export CASM=$(OBJ)/$(TARGET)
 endif

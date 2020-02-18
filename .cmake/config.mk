@@ -516,10 +516,12 @@ ifeq ($(ENV_CC),emcc)
 	`cat CMakeFiles/$(TARGET)-check.dir/link.txt | \
 	sed "s/$(TARGET)-check/$(TARGET)-check.js -s MAIN_MODULE=1/g"`
 	cd ./$(OBJ) && ln -fs $(TARGET)-check.js $(TARGET)-check
-	$(eval ENV_FLAGS=$(ENV_FLAGS) node)
 endif
 	@echo "-- Running unit test"
-	@$(ENV_FLAGS) ./$(OBJ)/$(TARGET)-check --gtest_output=xml:obj/report.xml $(ENV_ARGS)
+ifdef ENV_FLAGS
+	@$(ENV_FLAGS)
+endif
+	@./$(OBJ)/$(TARGET)-check --gtest_output=xml:obj/report.xml $(ENV_ARGS)
 
 
 benchmark: debug-benchmark
@@ -533,7 +535,6 @@ ifeq ($(ENV_CC),emcc)
 	`cat CMakeFiles/$(TARGET)-run.dir/link.txt | \
 	sed "s/$(TARGET)-run/$(TARGET)-run.js -s MAIN_MODULE=1/g"`
 	cd ./$(OBJ) && ln -fs $(TARGET)-run.js $(TARGET)-run
-	$(eval ENV_FLAGS=$(ENV_FLAGS) node)
 endif
 	$(if $(filter $(patsubst %-benchmark,%,$@),release), \
 	  @$(MAKE) --no-print-directory run-benchmark ENV_FLAGS=$(ENV_FLAGS) ENV_ARGS=$(ENV_ARGS) \
@@ -543,7 +544,10 @@ endif
 
 run-benchmark:
 	@echo "-- Running benchmark"
-	@$(ENV_FLAGS) ./$(OBJ)/$(TARGET)-run -o console -o json:obj/report.json $(ENV_ARGS)
+ifdef ENV_FLAGS
+	@$(ENV_FLAGS)
+endif
+	@./$(OBJ)/$(TARGET)-run -o console -o json:obj/report.json $(ENV_ARGS)
 
 
 install: debug-install
