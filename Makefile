@@ -34,12 +34,8 @@ UPDATE_ROOT = ../../lib/stdhl
 
 include .cmake/config.mk
 
-test-env: benchmark-env
-benchmark-env:
-ifeq ($(ENV_OSYS),Windows)
-	set CASM_ARG_PRE=--ast-emit
-	set CASM="$(OBJ)/$(TARGET)"
-else
-	export CASM_ARG_PRE=--ast-emit
-	export CASM=$(OBJ)/$(TARGET)
-endif
+run-test: $(ENV_SET) CASM_ARG_PRE := "--ast-emit"
+run-test: $(ENV_SET) CASM := "$(OBJ)/$(TARGET)"
+
+benchmark-test: $(ENV_SET) CASM_ARG_PRE := "--ast-emit"
+benchmark-test: $(ENV_SET) CASM := "$(OBJ)/$(TARGET)"

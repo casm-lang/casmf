@@ -33,11 +33,13 @@ BIN = install
 
 ifneq (,$(findstring sh,$(SHELL)))
 ENV_SHELL := sh
+ENV_SET := export
 WHICH := which
 DEVNUL := /dev/null
 endif
 ifneq (,$(findstring cmd,$(SHELL)))
 ENV_SHELL := cmd
+ENV_SET := set
 WHICH := where
 DEVNUL := NUL
 endif
@@ -519,11 +521,9 @@ ifeq ($(ENV_CC),emcc)
 endif
 	@$(MAKE) --no-print-directory run-test ENV_ARGS=$(ENV_ARGS)
 
-test-env:
-
 run-test:
 	@echo "-- Running unit test"
-	@$(MAKE) --no-print-directory test-env && ./$(OBJ)/$(TARGET)-check --gtest_output=xml:obj/report.xml $(ENV_ARGS)
+	@./$(OBJ)/$(TARGET)-check --gtest_output=xml:obj/report.xml $(ENV_ARGS)
 
 
 benchmark: debug-benchmark
@@ -544,11 +544,9 @@ endif
 	  @echo "-- Run benchmark via 'make run-benchmark'" \
 	)
 
-benchmark-env:
-
 run-benchmark:
 	@echo "-- Running benchmark"
-	@$(MAKE) --no-print-directory benchmark-env && @./$(OBJ)/$(TARGET)-run -o console -o json:obj/report.json $(ENV_ARGS)
+	@./$(OBJ)/$(TARGET)-run -o console -o json:obj/report.json $(ENV_ARGS)
 
 
 install: debug-install
