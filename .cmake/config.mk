@@ -518,7 +518,12 @@ ifeq ($(ENV_CC),emcc)
 	cd ./$(OBJ) && ln -fs $(TARGET)-check.js $(TARGET)-check
 endif
 	@echo "-- Running unit test"
-	$(ENV_FLAGS)
+	@$(MAKE) --no-print-directory run-test ENV_ARGS=$(ENV_ARGS)
+
+test-environment:
+
+run-test: test-environment
+	@echo "-- Running unit test"
 	@./$(OBJ)/$(TARGET)-check --gtest_output=xml:obj/report.xml $(ENV_ARGS)
 
 
@@ -535,14 +540,15 @@ ifeq ($(ENV_CC),emcc)
 	cd ./$(OBJ) && ln -fs $(TARGET)-run.js $(TARGET)-run
 endif
 	$(if $(filter $(patsubst %-benchmark,%,$@),release), \
-	  @$(MAKE) --no-print-directory run-benchmark ENV_FLAGS=$(ENV_FLAGS) ENV_ARGS=$(ENV_ARGS) \
+	  @$(MAKE) --no-print-directory run-benchmark ENV_ARGS=$(ENV_ARGS) \
 	, \
 	  @echo "-- Run benchmark via 'make run-benchmark'" \
 	)
 
-run-benchmark:
+benchmark-environment:
+
+run-benchmark: benchmark-environment
 	@echo "-- Running benchmark"
-	$(ENV_FLAGS)
 	@./$(OBJ)/$(TARGET)-run -o console -o json:obj/report.json $(ENV_ARGS)
 
 
