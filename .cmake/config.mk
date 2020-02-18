@@ -518,9 +518,7 @@ ifeq ($(ENV_CC),emcc)
 	cd ./$(OBJ) && ln -fs $(TARGET)-check.js $(TARGET)-check
 endif
 	@echo "-- Running unit test"
-ifdef ENV_FLAGS
-	@$(ENV_FLAGS)
-endif
+	$(ENV_FLAGS)
 	@./$(OBJ)/$(TARGET)-check --gtest_output=xml:obj/report.xml $(ENV_ARGS)
 
 
@@ -544,9 +542,7 @@ endif
 
 run-benchmark:
 	@echo "-- Running benchmark"
-ifdef ENV_FLAGS
-	@$(ENV_FLAGS)
-endif
+	$(ENV_FLAGS)
 	@./$(OBJ)/$(TARGET)-run -o console -o json:obj/report.json $(ENV_ARGS)
 
 
