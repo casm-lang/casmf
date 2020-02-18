@@ -33,13 +33,11 @@ BIN = install
 
 ifneq (,$(findstring sh,$(SHELL)))
 ENV_SHELL := sh
-ENV_SET := export
 WHICH := which
 DEVNUL := /dev/null
 endif
 ifneq (,$(findstring cmd,$(SHELL)))
 ENV_SHELL := cmd
-ENV_SET := set
 WHICH := where
 DEVNUL := NUL
 endif
@@ -354,6 +352,12 @@ endif
 
 ifeq ($(ENV_INSTALL),)
   $(error empty environment install path detected! $(I), $(ENV_INSTALL), $(BIN))
+endif
+
+ifeq ($(ENV_OSYS),Windows)
+  ENV_SET := set
+else
+  ENV_SET := export
 endif
 
 
