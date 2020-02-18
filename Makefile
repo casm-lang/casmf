@@ -34,8 +34,5 @@ UPDATE_ROOT = ../../lib/stdhl
 
 include .cmake/config.mk
 
-run-test: $(ENV_SET) CASM_ARG_PRE := "--ast-emit"
-run-test: $(ENV_SET) CASM := "$(OBJ)/$(TARGET)"
-
-benchmark-test: $(ENV_SET) CASM_ARG_PRE := "--ast-emit"
-benchmark-test: $(ENV_SET) CASM := "$(OBJ)/$(TARGET)"
+ENV_FLAGS  = $(ENV_SET) CASM_ARG_PRE="--ast-emit" &&
+ENV_FLAGS += $(ENV_SET) CASM="$(OBJ)/$(TARGET)"   &&
