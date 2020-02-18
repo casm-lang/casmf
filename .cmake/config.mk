@@ -519,11 +519,8 @@ ifeq ($(ENV_CC),emcc)
 	sed "s/$(TARGET)-check/$(TARGET)-check.js -s MAIN_MODULE=1/g"`
 	cd ./$(OBJ) && ln -fs $(TARGET)-check.js $(TARGET)-check
 endif
-	@$(MAKE) --no-print-directory run-test ENV_FLAGS=$(ENV_FLAGS) ENV_ARGS=$(ENV_ARGS)
-
-run-test:
 	@echo "-- Running unit test"
-	@$(ENV_FLAGS) ./$(OBJ)/$(TARGET)-check --gtest_output=xml:obj/report.xml $(ENV_ARGS)
+	$(ENV_FLAGS) ./$(OBJ)/$(TARGET)-check --gtest_output=xml:obj/report.xml $(ENV_ARGS)
 
 
 benchmark: debug-benchmark
