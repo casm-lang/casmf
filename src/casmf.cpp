@@ -100,7 +100,7 @@ int main( int argc, const char* argv[] )
 
     // add passes to the pass manager to setup command-line options
 
-    pm.add< libcasm_fe::AstDumpSourcePass >();
+    pm.add< libcasm_fe::CstEmitPass >();
 
     for( auto id : pm.passes() )
     {
@@ -146,7 +146,7 @@ int main( int argc, const char* argv[] )
     pr.setInput< libpass::LoadFilePass >( files.front() );
 
     pm.setDefaultResult( pr );
-    pm.setDefaultPass< libcasm_fe::AstDumpSourcePass >();
+    pm.setDefaultPass< libcasm_fe::CstEmitPass >();
 
     // set pass-specific configurations
 
