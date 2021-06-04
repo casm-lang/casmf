@@ -28,7 +28,7 @@
 
 * casmf: CASM Specification Format and Beautifier
 
-[[https://gitter.im/casm-lang/casmf][https://img.shields.io/badge/gitter-chat-darkcyan.svg?logo=gitter]]
+[[https://github.com/casm-lang/casm/discussions/categories/q-a][https://img.shields.io/badge/discussion-Q&A-blue.svg?logo=github]]
 [[https://github.com/casm-lang/casmf/actions?query=workflow%3Abuild][https://github.com/casm-lang/casmf/workflows/build/badge.svg]]
 [[https://github.com/casm-lang/casmf/actions?query=workflow%3Anightly][https://github.com/casm-lang/casmf/workflows/nightly/badge.svg]]
 [[https://codecov.io/gh/casm-lang/casmf][https://codecov.io/gh/casm-lang/casmf/badge.svg]]
